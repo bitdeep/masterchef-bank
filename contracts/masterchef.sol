@@ -57,10 +57,10 @@ contract MasterChef is Ownable, ReentrancyGuard {
     ApolloToken public apollo;
     address public devAddress;
     address public feeAddress;
-    uint256 constant max_apollo_supply = 1000000 ether;
+    uint256 constant max_apollo_supply = 300_000 ether;
 
     // IRIS tokens created per block.
-    uint256 public apolloPerBlock = 0.4 ether;
+    uint256 public apolloPerBlock = 4.1 ether;
 
     // Info of each pool.
     PoolInfo[] public poolInfo;
@@ -77,7 +77,7 @@ contract MasterChef is Ownable, ReentrancyGuard {
     uint16 public referralCommissionRate = 200;
     // Max referral commission rate: 5%.
     uint16 public constant MAXIMUM_REFERRAL_COMMISSION_RATE = 500;
-    uint256 public constant MAXIMUM_EMISSION_RATE = 1 ether;
+    uint256 public constant MAXIMUM_EMISSION_RATE = 5 ether;
 
     bool updateReferralAddress = false;
 
