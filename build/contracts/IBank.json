@@ -1,0 +1,265 @@
+{
+  "contractName": "IBank",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "addRepo",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"addRepo\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/interfaces/IBank.sol\":\"IBank\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/interfaces/IBank.sol\":{\"keccak256\":\"0xdaed2d4e0db64fb89a84f5de4e15dae3b29e5cfe7c078ec3fd575f5db96faca1\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://6ddeb1ed08c50d126c821850b60b4078569ee9dfaf0e26400cb18f344d2507f3\",\"dweb:/ipfs/QmegEWJrjympsN9DmPPpsCtsuC2gsnu9CmVf4sjvABZ2jj\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: UNLICENSED\r\npragma solidity 0.6.12;\r\n\r\ninterface IBank{\r\n    function addRepo(uint _amount) external;\r\n}\r\n",
+  "sourcePath": "C:\\defi\\bitdeep\\hermesdefi\\contracts\\contracts\\interfaces\\IBank.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/interfaces/IBank.sol",
+    "exportedSymbols": {
+      "IBank": [
+        3521
+      ]
+    },
+    "id": 3522,
+    "license": "UNLICENSED",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3515,
+        "literals": [
+          "solidity",
+          "0.6",
+          ".12"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "40:23:2"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 3521,
+        "linearizedBaseContracts": [
+          3521
+        ],
+        "name": "IBank",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": null,
+            "functionSelector": "896d59a0",
+            "id": 3520,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "addRepo",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 3518,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3517,
+                  "mutability": "mutable",
+                  "name": "_amount",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 3520,
+                  "src": "106:12:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3516,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "106:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "105:14:2"
+            },
+            "returnParameters": {
+              "id": 3519,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "128:0:2"
+            },
+            "scope": 3521,
+            "src": "89:40:2",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 3522,
+        "src": "67:65:2"
+      }
+    ],
+    "src": "40:94:2"
+  },
+  "legacyAST": {
+    "attributes": {
+      "absolutePath": "project:/contracts/interfaces/IBank.sol",
+      "exportedSymbols": {
+        "IBank": [
+          3521
+        ]
+      },
+      "license": "UNLICENSED"
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            "0.6",
+            ".12"
+          ]
+        },
+        "id": 3515,
+        "name": "PragmaDirective",
+        "src": "40:23:2"
+      },
+      {
+        "attributes": {
+          "abstract": false,
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "interface",
+          "documentation": null,
+          "fullyImplemented": false,
+          "linearizedBaseContracts": [
+            3521
+          ],
+          "name": "IBank",
+          "scope": 3522
+        },
+        "children": [
+          {
+            "attributes": {
+              "body": null,
+              "documentation": null,
+              "functionSelector": "896d59a0",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "addRepo",
+              "overrides": null,
+              "scope": 3521,
+              "stateMutability": "nonpayable",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "_amount",
+                      "overrides": null,
+                      "scope": 3520,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 3516,
+                        "name": "ElementaryTypeName",
+                        "src": "106:4:2"
+                      }
+                    ],
+                    "id": 3517,
+                    "name": "VariableDeclaration",
+                    "src": "106:12:2"
+                  }
+                ],
+                "id": 3518,
+                "name": "ParameterList",
+                "src": "105:14:2"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 3519,
+                "name": "ParameterList",
+                "src": "128:0:2"
+              }
+            ],
+            "id": 3520,
+            "name": "FunctionDefinition",
+            "src": "89:40:2"
+          }
+        ],
+        "id": 3521,
+        "name": "ContractDefinition",
+        "src": "67:65:2"
+      }
+    ],
+    "id": 3522,
+    "name": "SourceUnit",
+    "src": "40:94:2"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.12+commit.27d51765.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.2",
+  "updatedAt": "2021-10-13T00:36:24.500Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

@@ -1,0 +1,565 @@
+{
+  "contractName": "IReferral",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "referrer",
+          "type": "address"
+        }
+      ],
+      "name": "recordReferral",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getReferrer",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getReferrer\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"referrer\",\"type\":\"address\"}],\"name\":\"recordReferral\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"getReferrer(address)\":{\"details\":\"Get the referrer address that referred the user.\"},\"recordReferral(address,address)\":{\"details\":\"Record referral.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/libs/IReferral.sol\":\"IReferral\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/libs/IReferral.sol\":{\"keccak256\":\"0x760fd8fe5a8cc2a0510e9002887c94abf7ce860a0bcd3d5325d50651c689f727\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://af94a76305fb583896e15f9c83b2c30b7a9a59793e6728546ce6592485e28831\",\"dweb:/ipfs/QmYTEyaCEZJVbQ1FG2o95udMTnQ6Bbb116wccGrBFhNVhV\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: MIT\r\n\r\npragma solidity 0.6.12;\r\n\r\ninterface IReferral {\r\n    /**\r\n     * @dev Record referral.\r\n     */\r\n    function recordReferral(address user, address referrer) external;\r\n\r\n    /**\r\n     * @dev Get the referrer address that referred the user.\r\n     */\r\n    function getReferrer(address user) external view returns (address);\r\n}",
+  "sourcePath": "C:\\defi\\bitdeep\\hermesdefi\\contracts\\contracts\\libs\\IReferral.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/libs/IReferral.sol",
+    "exportedSymbols": {
+      "IReferral": [
+        5036
+      ]
+    },
+    "id": 5037,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 5019,
+        "literals": [
+          "solidity",
+          "0.6",
+          ".12"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "35:23:8"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 5036,
+        "linearizedBaseContracts": [
+          5036
+        ],
+        "name": "IReferral",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": {
+              "id": 5020,
+              "nodeType": "StructuredDocumentation",
+              "src": "89:42:8",
+              "text": " @dev Record referral."
+            },
+            "functionSelector": "0c7f7b6b",
+            "id": 5027,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "recordReferral",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 5025,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5022,
+                  "mutability": "mutable",
+                  "name": "user",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 5027,
+                  "src": "161:12:8",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5021,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "161:7:8",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 5024,
+                  "mutability": "mutable",
+                  "name": "referrer",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 5027,
+                  "src": "175:16:8",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5023,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "175:7:8",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "160:32:8"
+            },
+            "returnParameters": {
+              "id": 5026,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "201:0:8"
+            },
+            "scope": 5036,
+            "src": "137:65:8",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 5028,
+              "nodeType": "StructuredDocumentation",
+              "src": "210:74:8",
+              "text": " @dev Get the referrer address that referred the user."
+            },
+            "functionSelector": "4a9fefc7",
+            "id": 5035,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getReferrer",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 5031,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5030,
+                  "mutability": "mutable",
+                  "name": "user",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 5035,
+                  "src": "311:12:8",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5029,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "311:7:8",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "310:14:8"
+            },
+            "returnParameters": {
+              "id": 5034,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5033,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 5035,
+                  "src": "348:7:8",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 5032,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "348:7:8",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "347:9:8"
+            },
+            "scope": 5036,
+            "src": "290:67:8",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 5037,
+        "src": "62:298:8"
+      }
+    ],
+    "src": "35:325:8"
+  },
+  "legacyAST": {
+    "attributes": {
+      "absolutePath": "project:/contracts/libs/IReferral.sol",
+      "exportedSymbols": {
+        "IReferral": [
+          5036
+        ]
+      },
+      "license": "MIT"
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            "0.6",
+            ".12"
+          ]
+        },
+        "id": 5019,
+        "name": "PragmaDirective",
+        "src": "35:23:8"
+      },
+      {
+        "attributes": {
+          "abstract": false,
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "interface",
+          "documentation": null,
+          "fullyImplemented": false,
+          "linearizedBaseContracts": [
+            5036
+          ],
+          "name": "IReferral",
+          "scope": 5037
+        },
+        "children": [
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "0c7f7b6b",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "recordReferral",
+              "overrides": null,
+              "scope": 5036,
+              "stateMutability": "nonpayable",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @dev Record referral."
+                },
+                "id": 5020,
+                "name": "StructuredDocumentation",
+                "src": "89:42:8"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "user",
+                      "overrides": null,
+                      "scope": 5027,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 5021,
+                        "name": "ElementaryTypeName",
+                        "src": "161:7:8"
+                      }
+                    ],
+                    "id": 5022,
+                    "name": "VariableDeclaration",
+                    "src": "161:12:8"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "referrer",
+                      "overrides": null,
+                      "scope": 5027,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 5023,
+                        "name": "ElementaryTypeName",
+                        "src": "175:7:8"
+                      }
+                    ],
+                    "id": 5024,
+                    "name": "VariableDeclaration",
+                    "src": "175:16:8"
+                  }
+                ],
+                "id": 5025,
+                "name": "ParameterList",
+                "src": "160:32:8"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 5026,
+                "name": "ParameterList",
+                "src": "201:0:8"
+              }
+            ],
+            "id": 5027,
+            "name": "FunctionDefinition",
+            "src": "137:65:8"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "4a9fefc7",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getReferrer",
+              "overrides": null,
+              "scope": 5036,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @dev Get the referrer address that referred the user."
+                },
+                "id": 5028,
+                "name": "StructuredDocumentation",
+                "src": "210:74:8"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "user",
+                      "overrides": null,
+                      "scope": 5035,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 5029,
+                        "name": "ElementaryTypeName",
+                        "src": "311:7:8"
+                      }
+                    ],
+                    "id": 5030,
+                    "name": "VariableDeclaration",
+                    "src": "311:12:8"
+                  }
+                ],
+                "id": 5031,
+                "name": "ParameterList",
+                "src": "310:14:8"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 5035,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 5032,
+                        "name": "ElementaryTypeName",
+                        "src": "348:7:8"
+                      }
+                    ],
+                    "id": 5033,
+                    "name": "VariableDeclaration",
+                    "src": "348:7:8"
+                  }
+                ],
+                "id": 5034,
+                "name": "ParameterList",
+                "src": "347:9:8"
+              }
+            ],
+            "id": 5035,
+            "name": "FunctionDefinition",
+            "src": "290:67:8"
+          }
+        ],
+        "id": 5036,
+        "name": "ContractDefinition",
+        "src": "62:298:8"
+      }
+    ],
+    "id": 5037,
+    "name": "SourceUnit",
+    "src": "35:325:8"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.12+commit.27d51765.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.2",
+  "updatedAt": "2021-10-13T00:36:24.558Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "getReferrer(address)": {
+        "details": "Get the referrer address that referred the user."
+      },
+      "recordReferral(address,address)": {
+        "details": "Record referral."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
