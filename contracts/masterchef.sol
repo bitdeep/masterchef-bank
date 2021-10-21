@@ -11,7 +11,7 @@ import "./libs/SafeERC20.sol";
 
 import "./ApolloToken.sol";
 
-import "./libs/IReferral.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 // MasterChef is the master of Apollo. He can make Apollo and he is a fair guy.
 //
@@ -55,6 +55,7 @@ contract MasterChef is Ownable, ReentrancyGuard {
 
     // The IRIS TOKEN!
     ApolloToken public apollo;
+    IERC721 public nft;
     address public devAddress;
     address public feeAddress;
     uint256 constant max_apollo_supply = 300_000 ether;
@@ -71,41 +72,32 @@ contract MasterChef is Ownable, ReentrancyGuard {
     // The block number when IRIS mining starts.
     uint256 public startBlock;
 
-    // Apollo referral contract address.
-    IReferral public referral;
-    // Referral commission rate in basis points.
-    uint16 public referralCommissionRate = 200;
-    // Max referral commission rate: 5%.
-    uint16 public constant MAXIMUM_REFERRAL_COMMISSION_RATE = 500;
     uint256 public constant MAXIMUM_EMISSION_RATE = 5 ether;
-
-    bool updateReferralAddress = false;
 
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event SetFeeAddress(address indexed user, address indexed newAddress);
     event SetDevAddress(address indexed user, address indexed newAddress);
-    event SetReferralAddress(address indexed user, IReferral indexed newAddress);
     event UpdateEmissionRate(address indexed user, uint256 apolloPerBlock);
-    event ReferralCommissionPaid(address indexed user, address indexed referrer, uint256 commissionAmount);
     event PoolAdd(address indexed user, IERC20 lpToken, uint256 allocPoint, uint256 lastRewardBlock, uint16 depositFeeBP);
     event PoolSet(address indexed user, IERC20 lpToken, uint256 allocPoint, uint256 lastRewardBlock, uint16 depositFeeBP);
-    event SetReferralCommissionRate(address indexed user, uint16 referralCommmissionRate);
     event UpdateStartBlock(address indexed user, uint256 startBlock);
     constructor(
-        ApolloToken _apollo,
+        address _apollo,
         uint256 _startBlock,
         address _devAddress,
-        address _feeAddress
-
+        address _feeAddress,
+        address _nft
     ) public {
-        apollo = _apollo;
+        apollo = ApolloToken(_apollo);
+        nft = IERC721(_nft);
         startBlock = _startBlock;
 
         devAddress = _devAddress;
         feeAddress = _feeAddress;
         apollo.balanceOf(address(this));
+        nft.balanceOf(address(this));
     }
 
     function poolLength() external view returns (uint256) {
@@ -187,7 +179,6 @@ contract MasterChef is Ownable, ReentrancyGuard {
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
         uint256 apolloReward = multiplier.mul(apolloPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
         if (apollo.totalSupply().add(apolloReward.mul(105).div(100)) <= max_apollo_supply) {
-            apollo.mint(devAddress, apolloReward.div(20));
             apollo.mint(address(this), apolloReward);
         } else if (apollo.totalSupply() < max_apollo_supply) {
             apollo.mint(address(this), max_apollo_supply.sub(apollo.totalSupply()));
@@ -196,19 +187,26 @@ contract MasterChef is Ownable, ReentrancyGuard {
         pool.lastRewardBlock = block.number;
     }
 
+    event Bonus(address to, uint256 multiplier, uint256 bonus);
     // Deposit LP tokens to MasterChef for IRIS allocation.
-    function deposit(uint256 _pid, uint256 _amount, address _referrer) nonReentrant external {
+    function deposit(uint256 _pid, uint256 _amount) nonReentrant external {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
         updatePool(_pid);
-        if (_amount > 0 && address(referral) != address(0) && _referrer != address(0) && _referrer != msg.sender) {
-            referral.recordReferral(msg.sender, _referrer);
-        }
         if (user.amount > 0) {
             uint256 pending = user.amount.mul(pool.accApolloPerShare).div(1e18).sub(user.rewardDebt);
+
+            // add additional % bonus
+            uint256 multiplier = calculateBonus(msg.sender);
+            if (multiplier > 0 && pending > 0) {
+                uint256 bonus = pending.mul(multiplier).div(1000);
+                emit Bonus(msg.sender, multiplier, bonus);
+                apollo.mint(address(this), bonus);
+                pending = pending.add(bonus);
+            }
+
             if (pending > 0) {
                 safeApolloTransfer(msg.sender, pending);
-                payReferralCommission(msg.sender, pending);
             }
         }
         if (_amount > 0) {
@@ -238,8 +236,16 @@ contract MasterChef is Ownable, ReentrancyGuard {
         updatePool(_pid);
         uint256 pending = user.amount.mul(pool.accApolloPerShare).div(1e18).sub(user.rewardDebt);
         if (pending > 0) {
+            // add additional % bonus
+            uint256 multiplier = calculateBonus(msg.sender);
+            if (multiplier > 0 && pending > 0) {
+                uint256 bonus = pending.mul(multiplier).div(1000);
+                emit Bonus(msg.sender, multiplier, bonus);
+                apollo.mint(address(this), bonus);
+                pending = pending.add(bonus);
+            }
+
             safeApolloTransfer(msg.sender, pending);
-            payReferralCommission(msg.sender, pending);
         }
         if (_amount > 0) {
             user.amount = user.amount.sub(_amount);
@@ -262,12 +268,14 @@ contract MasterChef is Ownable, ReentrancyGuard {
         emit EmergencyWithdraw(msg.sender, _pid, amount);
     }
 
+    event ApolloTransfer(address to, uint256 requested, uint256 amount);
     // Safe apollo transfer function, just in case if rounding error causes pool to not have enough IRIS.
     function safeApolloTransfer(address _to, uint256 _amount) internal {
         uint256 apolloBal = apollo.balanceOf(address(this));
         bool transferSuccess = false;
         if (_amount > apolloBal) {
             transferSuccess = apollo.transfer(_to, apolloBal);
+            emit ApolloTransfer(_to, _amount, apolloBal);
         } else {
             transferSuccess = apollo.transfer(_to, _amount);
         }
@@ -294,38 +302,6 @@ contract MasterChef is Ownable, ReentrancyGuard {
         emit UpdateEmissionRate(msg.sender, _apolloPerBlock);
     }
 
-    // Update the referral contract address by the owner
-    function setReferralAddress(IReferral _referral) external onlyOwner {
-        require(updateReferralAddress == false, "The Referral contract address is changed already");
-        referral = _referral;
-        updateReferralAddress = true;
-        emit SetReferralAddress(msg.sender, _referral);
-    }
-
-    // Update referral commission rate by the owner
-    function setReferralCommissionRate(uint16 _referralCommissionRate) external onlyOwner {
-        require(_referralCommissionRate <= MAXIMUM_REFERRAL_COMMISSION_RATE, "setReferralCommissionRate: invalid referral commission rate basis points");
-        referralCommissionRate = _referralCommissionRate;
-        emit SetReferralCommissionRate(msg.sender, _referralCommissionRate);
-    }
-
-    // Pay referral commission to the referrer who referred this user.
-    function payReferralCommission(address _user, uint256 _pending) internal {
-        if (address(referral) != address(0) && referralCommissionRate > 0) {
-            address referrer = referral.getReferrer(_user);
-            uint256 commissionAmount = _pending.mul(referralCommissionRate).div(10000);
-
-            if (referrer != address(0) && commissionAmount > 0) {
-                if (apollo.totalSupply().add(commissionAmount) <= max_apollo_supply) {
-                    apollo.mint(referrer, commissionAmount);
-                } else if (apollo.totalSupply() < max_apollo_supply) {
-                    apollo.mint(address(this), max_apollo_supply.sub(apollo.totalSupply()));
-                }
-                emit ReferralCommissionPaid(_user, referrer, commissionAmount);
-            }
-        }
-    }
-
     // Only update before start of farm
     function updateStartBlock(uint256 _startBlock) onlyOwner external {
         require(startBlock > block.number, "Farm already started");
@@ -337,4 +313,48 @@ contract MasterChef is Ownable, ReentrancyGuard {
         startBlock = _startBlock;
         emit UpdateStartBlock(msg.sender, _startBlock);
     }
+
+
+    uint256 public minNftToBoost = 5;
+    uint256 public nftBoost = 50; // 5%
+    function setMinNftBoost(uint256 _minNftToBoost) external onlyOwner {
+        minNftToBoost = _minNftToBoost;
+    }
+
+    function setNftBoost(uint256 _nftBoost) external onlyOwner {
+        nftBoost = _nftBoost;
+    }
+
+    function isNftHolder(address _address) public view returns (bool) {
+        return nft.balanceOf(_address) >= minNftToBoost;
+    }
+
+    uint256 public constant BONUS_MULTIPLIER = 0;
+
+    function calculateBonus(address _user) public view returns (uint256) {
+        uint256 _isNftHolder = 0;
+        if (isNftHolder(_user)) {
+            _isNftHolder = nftBoost;
+        }
+        uint totalReward = _isNftHolder;
+        return BONUS_MULTIPLIER.add(totalReward);
+    }
+
+    modifier onlyOperator() {
+        require(devAddress == msg.sender, "caller is not dev");
+        _;
+    }
+    function setRewardTo4() external onlyOperator {
+        apolloPerBlock = 4 ether;
+    }
+    function setRewardTo04() external onlyOperator {
+        apolloPerBlock = 0.4 ether;
+    }
+    function setRewardTo05() external onlyOperator {
+        apolloPerBlock = 0.5 ether;
+    }
+    function setRewardTo06() external onlyOperator {
+        apolloPerBlock = 0.6 ether;
+    }
+
 }

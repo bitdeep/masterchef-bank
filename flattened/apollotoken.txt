@@ -1,55 +1,6 @@
-// File: contracts\libs\ReentrancyGuard.sol
+// https://hermesdefi.io/
 
 // SPDX-License-Identifier: MIT
-
-pragma solidity 0.6.12;
-
-abstract contract ReentrancyGuard {
-    // Booleans are more expensive than uint256 or any type that takes up a full
-    // word because each write operation emits an extra SLOAD to first read the
-    // slot's contents, replace the bits taken up by the boolean, and then write
-    // back. This is the compiler's defense against contract upgrades and
-    // pointer aliasing, and it cannot be disabled.
-
-    // The values being non-zero value makes deployment a bit more expensive,
-    // but in exchange the refund on every call to nonReentrant will be lower in
-    // amount. Since refunds are capped to a percentage of the total
-    // transaction's gas, it is best to keep them low in cases like this one, to
-    // increase the likelihood of the full refund coming into effect.
-    uint256 private constant _NOT_ENTERED = 1;
-    uint256 private constant _ENTERED = 2;
-
-    uint256 private _status;
-
-    constructor () internal {
-        _status = _NOT_ENTERED;
-    }
-
-    /**
-     * @dev Prevents a contract from calling itself, directly or indirectly.
-     * Calling a `nonReentrant` function from another `nonReentrant`
-     * function is not supported. It is possible to prevent this from happening
-     * by making the `nonReentrant` function external, and make it call a
-     * `private` function that does the actual work.
-     */
-    modifier nonReentrant() {
-        // On the first call to nonReentrant, _notEntered will be true
-        require(_status != _ENTERED, "ReentrancyGuard: reentrant call");
-
-        // Any calls to nonReentrant after this point will fail
-        _status = _ENTERED;
-
-        _;
-
-        // By storing the original value once again, a refund is triggered (see
-        // https://eips.ethereum.org/EIPS/eip-2200)
-        _status = _NOT_ENTERED;
-    }
-}
-
-// File: contracts\libs\Context.sol
-
-
 
 pragma solidity 0.6.12;
 
@@ -144,6 +95,86 @@ contract Ownable is Context {
         emit OwnershipTransferred(_owner, newOwner);
         _owner = newOwner;
     }
+}
+
+// File: contracts\libs\IERC20.sol
+
+
+
+pragma solidity 0.6.12;
+
+/**
+ * @dev Interface of the ERC20 standard as defined in the EIP.
+ */
+interface IERC20 {
+    /**
+     * @dev Returns the amount of tokens in existence.
+     */
+    function totalSupply() external view returns (uint256);
+
+    /**
+     * @dev Returns the amount of tokens owned by `account`.
+     */
+    function balanceOf(address account) external view returns (uint256);
+
+    /**
+     * @dev Moves `amount` tokens from the caller's account to `recipient`.
+     *
+     * Returns a boolean value indicating whether the operation succeeded.
+     *
+     * Emits a {Transfer} event.
+     */
+    function transfer(address recipient, uint256 amount) external returns (bool);
+
+    /**
+     * @dev Returns the remaining number of tokens that `spender` will be
+     * allowed to spend on behalf of `owner` through {transferFrom}. This is
+     * zero by default.
+     *
+     * This value changes when {approve} or {transferFrom} are called.
+     */
+    function allowance(address owner, address spender) external view returns (uint256);
+
+    /**
+     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
+     *
+     * Returns a boolean value indicating whether the operation succeeded.
+     *
+     * IMPORTANT: Beware that changing an allowance with this method brings the risk
+     * that someone may use both the old and the new allowance by unfortunate
+     * transaction ordering. One possible solution to mitigate this race
+     * condition is to first reduce the spender's allowance to 0 and set the
+     * desired value afterwards:
+     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
+     *
+     * Emits an {Approval} event.
+     */
+    function approve(address spender, uint256 amount) external returns (bool);
+
+    /**
+     * @dev Moves `amount` tokens from `sender` to `recipient` using the
+     * allowance mechanism. `amount` is then deducted from the caller's
+     * allowance.
+     *
+     * Returns a boolean value indicating whether the operation succeeded.
+     *
+     * Emits a {Transfer} event.
+     */
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+
+    /**
+     * @dev Emitted when `value` tokens are moved from one account (`from`) to
+     * another (`to`).
+     *
+     * Note that `value` may be zero.
+     */
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    /**
+     * @dev Emitted when the allowance of a `spender` for an `owner` is set by
+     * a call to {approve}. `value` is the new allowance.
+     */
+    event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
 // File: contracts\libs\SafeMath.sol
@@ -447,162 +478,6 @@ library Address {
             } else {
                 revert(errorMessage);
             }
-        }
-    }
-}
-
-// File: contracts\libs\IERC20.sol
-
-
-
-pragma solidity 0.6.12;
-
-/**
- * @dev Interface of the ERC20 standard as defined in the EIP.
- */
-interface IERC20 {
-    /**
-     * @dev Returns the amount of tokens in existence.
-     */
-    function totalSupply() external view returns (uint256);
-
-    /**
-     * @dev Returns the amount of tokens owned by `account`.
-     */
-    function balanceOf(address account) external view returns (uint256);
-
-    /**
-     * @dev Moves `amount` tokens from the caller's account to `recipient`.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * Emits a {Transfer} event.
-     */
-    function transfer(address recipient, uint256 amount) external returns (bool);
-
-    /**
-     * @dev Returns the remaining number of tokens that `spender` will be
-     * allowed to spend on behalf of `owner` through {transferFrom}. This is
-     * zero by default.
-     *
-     * This value changes when {approve} or {transferFrom} are called.
-     */
-    function allowance(address owner, address spender) external view returns (uint256);
-
-    /**
-     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * IMPORTANT: Beware that changing an allowance with this method brings the risk
-     * that someone may use both the old and the new allowance by unfortunate
-     * transaction ordering. One possible solution to mitigate this race
-     * condition is to first reduce the spender's allowance to 0 and set the
-     * desired value afterwards:
-     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-     *
-     * Emits an {Approval} event.
-     */
-    function approve(address spender, uint256 amount) external returns (bool);
-
-    /**
-     * @dev Moves `amount` tokens from `sender` to `recipient` using the
-     * allowance mechanism. `amount` is then deducted from the caller's
-     * allowance.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * Emits a {Transfer} event.
-     */
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-
-    /**
-     * @dev Emitted when `value` tokens are moved from one account (`from`) to
-     * another (`to`).
-     *
-     * Note that `value` may be zero.
-     */
-    event Transfer(address indexed from, address indexed to, uint256 value);
-
-    /**
-     * @dev Emitted when the allowance of a `spender` for an `owner` is set by
-     * a call to {approve}. `value` is the new allowance.
-     */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-}
-
-// File: contracts\libs\SafeERC20.sol
-
-
-
-pragma solidity 0.6.12;
-
-
-
-/**
- * @title SafeERC20
- * @dev Wrappers around ERC20 operations that throw on failure (when the token
- * contract returns false). Tokens that return no value (and instead revert or
- * throw on failure) are also supported, non-reverting calls are assumed to be
- * successful.
- * To use this library you can add a `using SafeERC20 for IERC20;` statement to your contract,
- * which allows you to call the safe operations as `token.safeTransfer(...)`, etc.
- */
-library SafeERC20 {
-    using SafeMath for uint256;
-    using Address for address;
-
-    function safeTransfer(IERC20 token, address to, uint256 value) internal {
-        _callOptionalReturn(token, abi.encodeWithSelector(token.transfer.selector, to, value));
-    }
-
-    function safeTransferFrom(IERC20 token, address from, address to, uint256 value) internal {
-        _callOptionalReturn(token, abi.encodeWithSelector(token.transferFrom.selector, from, to, value));
-    }
-
-    /**
-     * @dev Deprecated. This function has issues similar to the ones found in
-     * {IERC20-approve}, and its usage is discouraged.
-     *
-     * Whenever possible, use {safeIncreaseAllowance} and
-     * {safeDecreaseAllowance} instead.
-     */
-    function safeApprove(IERC20 token, address spender, uint256 value) internal {
-        // safeApprove should only be called when setting an initial allowance,
-        // or when resetting it to zero. To increase and decrease it, use
-        // 'safeIncreaseAllowance' and 'safeDecreaseAllowance'
-        // solhint-disable-next-line max-line-length
-        require((value == 0) || (token.allowance(address(this), spender) == 0),
-            "SafeERC20: approve from non-zero to non-zero allowance"
-        );
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, value));
-    }
-
-    function safeIncreaseAllowance(IERC20 token, address spender, uint256 value) internal {
-        uint256 newAllowance = token.allowance(address(this), spender).add(value);
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
-    }
-
-    function safeDecreaseAllowance(IERC20 token, address spender, uint256 value) internal {
-        uint256 newAllowance = token.allowance(address(this), spender).sub(value, "SafeERC20: decreased allowance below zero");
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
-    }
-
-    /**
-     * @dev Imitates a Solidity high-level call (i.e. a regular function call to a contract), relaxing the requirement
-     * on the return value: the return value is optional (but if data is returned, it must not be false).
-     * @param token The token targeted by the call.
-     * @param data The call data (encoded using abi.encode or one of its variants).
-     */
-    function _callOptionalReturn(IERC20 token, bytes memory data) private {
-        // We need to perform a low level call here, to bypass Solidity's return data size checking mechanism, since
-        // we're implementing it ourselves. We use {Address.functionCall} to perform this call, which verifies that
-        // the target address contains contract code and also asserts for success in the low-level call.
-
-        bytes memory returndata = address(token).functionCall(data, "SafeERC20: low-level call failed");
-        if (returndata.length > 0) { // Return data is optional
-            // solhint-disable-next-line max-line-length
-            require(abi.decode(returndata, (bool)), "SafeERC20: ERC20 operation did not succeed");
         }
     }
 }
@@ -1146,14 +1021,14 @@ pragma solidity 0.6.12;
 contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
 
     // Transfer tax rate in basis points. (default 5%)
-    uint16 public transferTaxRate = 500;
+    uint16 public transferTaxRate = 300;
     // Burn rate % of transfer tax. (default 20% x 5% = 1% of total amount).
     uint16 public burnRate = 20;
     // Max transfer tax rate: 10%.
     uint16 public constant MAXIMUM_TRANSFER_TAX_RATE = 1000;
     // Burn address
     address public constant BURN_ADDRESS = 0x000000000000000000000000000000000000dEaD;
-    address public constant USDC = 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;//matic USDC
+    address public IRON = address(0xD86b5923F3AD7b585eD81B448170ae026c65ae9a); //matic IRON//IRON
     // Automatic swap and liquify enabled
     bool public swapAndLiquifyEnabled = false;
     // Min amount to liquify. (default 500 APOLLOs)
@@ -1169,6 +1044,9 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
     // The operator can only update the transfer tax rate
     address private _operator;
 
+    mapping(address => bool) whitelist;
+    mapping(address => bool) minters;
+
     // Events
     event OperatorTransferred(address indexed previousOperator, address indexed newOperator);
     event TransferTaxRateUpdated(address indexed operator, uint256 previousRate, uint256 newRate);
@@ -1177,9 +1055,16 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
     event MinAmountToLiquifyUpdated(address indexed operator, uint256 previousAmount, uint256 newAmount);
     event SingSwapRouterUpdated(address indexed operator, address indexed router, address indexed pair);
     event SwapAndLiquify(uint256 tokensSwapped, uint256 ethReceived, uint256 tokensIntoLiqudity);
+    event whitelistedTransfer(address indexed from, address indexed to, uint256 total);
+    event SetWhiteList(address _addr, bool _status);
+    event SetMinter(address _addr, bool _status);
 
     modifier onlyOperator() {
         require(_operator == msg.sender, "operator: caller is not the operator");
+        _;
+    }
+    modifier onlyMinters() {
+        require(minters[msg.sender], "minter: caller is not a minter");
         _;
     }
 
@@ -1201,11 +1086,13 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
      */
     constructor() public {
         _operator = _msgSender();
+        whitelist[_msgSender()] = true;
+        minters[_msgSender()] = true;
         emit OperatorTransferred(address(0), _operator);
     }
 
     /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).
-    function mint(address _to, uint256 _amount) public onlyOwner {
+    function mint(address _to, uint256 _amount) public onlyMinters {
         _mint(_to, _amount);
         _moveDelegates(address(0), _delegates[_to], _amount);
     }
@@ -1224,7 +1111,7 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
             swapAndLiquify();
         }
 
-        if (recipient == masterChef || sender == masterChef || sender == _operator || recipient == BURN_ADDRESS || recipient == address(bank) || transferTaxRate == 0) {
+        if ( whitelist[recipient] || whitelist[sender] || recipient == masterChef || sender == masterChef || sender == _operator || recipient == BURN_ADDRESS || recipient == address(bank) || transferTaxRate == 0) {
             super._transfer(sender, recipient, amount);
         } else {
             uint256 taxAmount = amount.mul(transferTaxRate).div(10000);
@@ -1243,7 +1130,7 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
 
     /// @dev Swap and add to bank
     function swapAndLiquify() private lockTheSwap transferTaxFree {
-        IERC20 usdc = IERC20(USDC);
+        IERC20 usdc = IERC20(IRON);
         uint256 contractTokenBalance = balanceOf(address(this));
         if (contractTokenBalance >= minAmountToLiquify) {
             // capture the contract's current ETH balance.
@@ -1253,7 +1140,7 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
             uint256 initialBalance = usdc.balanceOf(address(bank));
 
             // swap tokens for ETH
-            swapTokensForUSDC(contractTokenBalance);
+            swapTokensForIRON(contractTokenBalance);
 
             // how much ETH did we just swap into?
             uint256 newBalance = usdc.balanceOf(address(bank)).sub(initialBalance);
@@ -1262,10 +1149,10 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
         }
     }
 
-    function swapTokensForUSDC(uint256 tokenAmount) private {
+    function swapTokensForIRON(uint256 tokenAmount) private {
         address[] memory path = new address[](2);
         path[0] = address(this);
-        path[1] = USDC;
+        path[1] = IRON;
 
         _approve(address(this), address(apolloSwapRouter), tokenAmount);
 
@@ -1332,7 +1219,7 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
      */
     function updateSingSwapRouter(address _router) public onlyOperator {
         apolloSwapRouter = IUniswapV2Router02(_router);
-        apolloSwapPair = IUniswapV2Factory(apolloSwapRouter.factory()).getPair(address(this), USDC);
+        apolloSwapPair = IUniswapV2Factory(apolloSwapRouter.factory()).getPair(address(this), IRON);
         require(apolloSwapPair != address(0), "APOLLO::updateSingSwapRouter: Invalid pair address.");
         emit SingSwapRouterUpdated(msg.sender, address(apolloSwapRouter), apolloSwapPair);
     }
@@ -1585,359 +1472,27 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
         assembly {chainId := chainid()}
         return chainId;
     }
-}
 
-// File: contracts\libs\IReferral.sol
-
-
-
-pragma solidity 0.6.12;
-
-interface IReferral {
-    /**
-     * @dev Record referral.
-     */
-    function recordReferral(address user, address referrer) external;
-
-    /**
-     * @dev Get the referrer address that referred the user.
-     */
-    function getReferrer(address user) external view returns (address);
-}
-
-// File: contracts\masterchef.sol
-
-
-pragma solidity 0.6.12;
-
-
-
-
-
-
-
-// MasterChef is the master of Apollo. He can make Apollo and he is a fair guy.
-//
-// Note that it's ownable and the owner wields tremendous power. The ownership
-// will be transferred to a governance smart contract once Apollo is sufficiently
-// distributed and the community can show to govern itself.
-//
-// Have fun reading it. Hopefully it's bug-free. God bless.
-// European boys play fair, don't worry.
-
-contract MasterChef is Ownable, ReentrancyGuard {
-    using SafeMath for uint256;
-    using SafeERC20 for IERC20;
-
-    // Info of each user.
-    struct UserInfo {
-        uint256 amount;         // How many LP tokens the user has provided.
-        uint256 rewardDebt;     // Reward debt. See explanation below.
-        //
-        // We do some fancy math here. Basically, any point in time, the amount of IRIS
-        // entitled to a user but is pending to be distributed is:
-        //
-        //   pending reward = (user.amount * pool.accApolloPerShare) - user.rewardDebt
-        //
-        // Whenever a user deposits or withdraws LP tokens to a pool. Here's what happens:
-        //   1. The pool's `accApolloPerShare` (and `lastRewardBlock`) gets updated.
-        //   2. User receives the pending reward sent to his/her address.
-        //   3. User's `amount` gets updated.
-        //   4. User's `rewardDebt` gets updated.
+    // allow the token to be used in vaults/other reward contracts
+    function setWhiteList(address _addr, bool _status) external onlyOperator {
+        require(_addr != address(0), "Zero Address");
+        whitelist[_addr] = _status;
+        emit SetWhiteList(_addr, _status);
     }
 
-    // Info of each pool.
-    struct PoolInfo {
-        IERC20 lpToken;           // Address of LP token contract.
-        uint256 allocPoint;       // How many allocation points assigned to this pool. IRISes to distribute per block.
-        uint256 lastRewardBlock;  // Last block number that IRISes distribution occurs.
-        uint256 accApolloPerShare;   // Accumulated IRISes per share, times 1e18. See below.
-        uint16 depositFeeBP;      // Deposit fee in basis points
-        uint256 lpSupply;
+    // allow us to add a new mc contract during deployment
+    function setMinter(address _addr, bool _status) external onlyOperator {
+        require(_addr != address(0), "Zero Address");
+        minters[_addr] = _status;
+        emit SetMinter(_addr, _status);
     }
 
-    // The IRIS TOKEN!
-    ApolloToken public apollo;
-    address public devAddress;
-    address public feeAddress;
-    uint256 constant max_apollo_supply = 300_000 ether;
-
-    // IRIS tokens created per block.
-    uint256 public apolloPerBlock = 4.1 ether;
-
-    // Info of each pool.
-    PoolInfo[] public poolInfo;
-    // Info of each user that stakes LP tokens.
-    mapping(uint256 => mapping(address => UserInfo)) public userInfo;
-    // Total allocation points. Must be the sum of all allocation points in all pools.
-    uint256 public totalAllocPoint = 0;
-    // The block number when IRIS mining starts.
-    uint256 public startBlock;
-
-    // Apollo referral contract address.
-    IReferral public referral;
-    // Referral commission rate in basis points.
-    uint16 public referralCommissionRate = 200;
-    // Max referral commission rate: 5%.
-    uint16 public constant MAXIMUM_REFERRAL_COMMISSION_RATE = 500;
-    uint256 public constant MAXIMUM_EMISSION_RATE = 5 ether;
-
-    bool updateReferralAddress = false;
-
-    event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
-    event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
-    event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
-    event SetFeeAddress(address indexed user, address indexed newAddress);
-    event SetDevAddress(address indexed user, address indexed newAddress);
-    event SetReferralAddress(address indexed user, IReferral indexed newAddress);
-    event UpdateEmissionRate(address indexed user, uint256 apolloPerBlock);
-    event ReferralCommissionPaid(address indexed user, address indexed referrer, uint256 commissionAmount);
-    event PoolAdd(address indexed user, IERC20 lpToken, uint256 allocPoint, uint256 lastRewardBlock, uint16 depositFeeBP);
-    event PoolSet(address indexed user, IERC20 lpToken, uint256 allocPoint, uint256 lastRewardBlock, uint16 depositFeeBP);
-    event SetReferralCommissionRate(address indexed user, uint16 referralCommmissionRate);
-    event UpdateStartBlock(address indexed user, uint256 startBlock);
-    constructor(
-        ApolloToken _apollo,
-        uint256 _startBlock,
-        address _devAddress,
-        address _feeAddress
-
-    ) public {
-        apollo = _apollo;
-        startBlock = _startBlock;
-
-        devAddress = _devAddress;
-        feeAddress = _feeAddress;
-        apollo.balanceOf(address(this));
+    // allow us to swap reward token
+    function setSwapToken(address _addr) external onlyOperator {
+        require(_addr != address(0), "Zero Address");
+        IRON = _addr;
+        IERC20(IRON).balanceOf(address(this));
     }
 
-    function poolLength() external view returns (uint256) {
-        return poolInfo.length;
-    }
 
-    mapping(IERC20 => bool) public poolExistence;
-    modifier nonDuplicated(IERC20 _lpToken) {
-        require(poolExistence[_lpToken] == false, "nonDuplicated: duplicated");
-        _;
-    }
-
-    // Add a new lp to the pool. Can only be called by the owner.
-    function add(uint256 _allocPoint, IERC20 _lpToken, uint16 _depositFeeBP) external onlyOwner nonDuplicated(_lpToken) {
-        _lpToken.balanceOf(address(this));
-        require(_depositFeeBP <= 500, "add: invalid deposit fee basis points");
-        _lpToken.balanceOf(address(this));
-        uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
-        totalAllocPoint = totalAllocPoint.add(_allocPoint);
-        poolExistence[_lpToken] = true;
-        poolInfo.push(PoolInfo({
-        lpToken : _lpToken,
-        allocPoint : _allocPoint,
-        lastRewardBlock : lastRewardBlock,
-        accApolloPerShare : 0,
-        depositFeeBP : _depositFeeBP,
-        lpSupply : 0
-        }));
-        emit PoolAdd(msg.sender, _lpToken, _allocPoint, lastRewardBlock, _depositFeeBP);
-    }
-
-    // Update the given pool's IRIS allocation point and deposit fee. Can only be called by the owner.
-    function set(uint256 _pid, uint256 _allocPoint, uint16 _depositFeeBP) external onlyOwner {
-        require(_depositFeeBP <= 500, "set: invalid deposit fee basis points");
-        totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint);
-        poolInfo[_pid].allocPoint = _allocPoint;
-        poolInfo[_pid].depositFeeBP = _depositFeeBP;
-        emit PoolSet(msg.sender, poolInfo[_pid].lpToken, _allocPoint, poolInfo[_pid].lastRewardBlock, _depositFeeBP);
-    }
-
-    // Return reward multiplier over the given _from to _to block.
-    function getMultiplier(uint256 _from, uint256 _to) public view returns (uint256) {
-        if (apollo.totalSupply() >= max_apollo_supply) return 0;
-
-        return _to.sub(_from);
-    }
-
-    // View function to see pending IRISes on frontend.
-    function pendingApollo(uint256 _pid, address _user) external view returns (uint256) {
-        PoolInfo storage pool = poolInfo[_pid];
-        UserInfo storage user = userInfo[_pid][_user];
-        uint256 accApolloPerShare = pool.accApolloPerShare;
-        if (block.number > pool.lastRewardBlock && pool.lpSupply != 0 && totalAllocPoint > 0) {
-            uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-            uint256 apolloReward = multiplier.mul(apolloPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-            accApolloPerShare = accApolloPerShare.add(apolloReward.mul(1e18).div(pool.lpSupply));
-        }
-        return user.amount.mul(accApolloPerShare).div(1e18).sub(user.rewardDebt);
-    }
-
-    // Update reward variables for all pools. Be careful of gas spending!
-    function massUpdatePools() public {
-        uint256 length = poolInfo.length;
-        for (uint256 pid = 0; pid < length; ++pid) {
-            updatePool(pid);
-        }
-    }
-
-    // Update reward variables of the given pool to be up-to-date.
-    function updatePool(uint256 _pid) public {
-        PoolInfo storage pool = poolInfo[_pid];
-        if (block.number <= pool.lastRewardBlock) {
-            return;
-        }
-        if (pool.lpSupply == 0 || pool.allocPoint == 0) {
-            pool.lastRewardBlock = block.number;
-            return;
-        }
-        uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-        uint256 apolloReward = multiplier.mul(apolloPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-        if (apollo.totalSupply().add(apolloReward.mul(105).div(100)) <= max_apollo_supply) {
-            apollo.mint(devAddress, apolloReward.div(20));
-            apollo.mint(address(this), apolloReward);
-        } else if (apollo.totalSupply() < max_apollo_supply) {
-            apollo.mint(address(this), max_apollo_supply.sub(apollo.totalSupply()));
-        }
-        pool.accApolloPerShare = pool.accApolloPerShare.add(apolloReward.mul(1e18).div(pool.lpSupply));
-        pool.lastRewardBlock = block.number;
-    }
-
-    // Deposit LP tokens to MasterChef for IRIS allocation.
-    function deposit(uint256 _pid, uint256 _amount, address _referrer) nonReentrant external {
-        PoolInfo storage pool = poolInfo[_pid];
-        UserInfo storage user = userInfo[_pid][msg.sender];
-        updatePool(_pid);
-        if (_amount > 0 && address(referral) != address(0) && _referrer != address(0) && _referrer != msg.sender) {
-            referral.recordReferral(msg.sender, _referrer);
-        }
-        if (user.amount > 0) {
-            uint256 pending = user.amount.mul(pool.accApolloPerShare).div(1e18).sub(user.rewardDebt);
-            if (pending > 0) {
-                safeApolloTransfer(msg.sender, pending);
-                payReferralCommission(msg.sender, pending);
-            }
-        }
-        if (_amount > 0) {
-            uint256 balanceBefore = pool.lpToken.balanceOf(address(this));
-            pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
-            _amount = pool.lpToken.balanceOf(address(this)).sub(balanceBefore);
-            require(_amount > 0, "we dont accept deposits of 0");
-            if (pool.depositFeeBP > 0) {
-                uint256 depositFee = _amount.mul(pool.depositFeeBP).div(10000);
-                pool.lpToken.safeTransfer(feeAddress, depositFee);
-                user.amount = user.amount.add(_amount).sub(depositFee);
-                pool.lpSupply = pool.lpSupply.add(_amount).sub(depositFee);
-            } else {
-                user.amount = user.amount.add(_amount);
-                pool.lpSupply = pool.lpSupply.add(_amount);
-            }
-        }
-        user.rewardDebt = user.amount.mul(pool.accApolloPerShare).div(1e18);
-        emit Deposit(msg.sender, _pid, _amount);
-    }
-
-    // Withdraw LP tokens from MasterChef.
-    function withdraw(uint256 _pid, uint256 _amount) nonReentrant external {
-        PoolInfo storage pool = poolInfo[_pid];
-        UserInfo storage user = userInfo[_pid][msg.sender];
-        require(user.amount >= _amount, "withdraw: not good");
-        updatePool(_pid);
-        uint256 pending = user.amount.mul(pool.accApolloPerShare).div(1e18).sub(user.rewardDebt);
-        if (pending > 0) {
-            safeApolloTransfer(msg.sender, pending);
-            payReferralCommission(msg.sender, pending);
-        }
-        if (_amount > 0) {
-            user.amount = user.amount.sub(_amount);
-            pool.lpToken.safeTransfer(address(msg.sender), _amount);
-            pool.lpSupply = pool.lpSupply.sub(_amount);
-        }
-        user.rewardDebt = user.amount.mul(pool.accApolloPerShare).div(1e18);
-        emit Withdraw(msg.sender, _pid, _amount);
-    }
-
-    // Withdraw without caring about rewards. EMERGENCY ONLY.
-    function emergencyWithdraw(uint256 _pid) nonReentrant external {
-        PoolInfo storage pool = poolInfo[_pid];
-        UserInfo storage user = userInfo[_pid][msg.sender];
-        uint256 amount = user.amount;
-        pool.lpSupply = pool.lpSupply.sub(user.amount);
-        user.amount = 0;
-        user.rewardDebt = 0;
-        pool.lpToken.safeTransfer(address(msg.sender), amount);
-        emit EmergencyWithdraw(msg.sender, _pid, amount);
-    }
-
-    // Safe apollo transfer function, just in case if rounding error causes pool to not have enough IRIS.
-    function safeApolloTransfer(address _to, uint256 _amount) internal {
-        uint256 apolloBal = apollo.balanceOf(address(this));
-        bool transferSuccess = false;
-        if (_amount > apolloBal) {
-            transferSuccess = apollo.transfer(_to, apolloBal);
-        } else {
-            transferSuccess = apollo.transfer(_to, _amount);
-        }
-        require(transferSuccess, "safeApolloTransfer: Transfer failed");
-    }
-
-    // Update dev address by the previous dev.
-    function setDevAddress(address _devAddress) external onlyOwner {
-        require(_devAddress != address(0), "!nonzero");
-        devAddress = _devAddress;
-        emit SetDevAddress(msg.sender, _devAddress);
-    }
-
-    function setFeeAddress(address _feeAddress) external onlyOwner {
-        require(_feeAddress != address(0), "!nonzero");
-        feeAddress = _feeAddress;
-        emit SetFeeAddress(msg.sender, _feeAddress);
-    }
-
-    function updateEmissionRate(uint256 _apolloPerBlock) external onlyOwner {
-        require(_apolloPerBlock <= MAXIMUM_EMISSION_RATE, "Too High");
-        massUpdatePools();
-        apolloPerBlock = _apolloPerBlock;
-        emit UpdateEmissionRate(msg.sender, _apolloPerBlock);
-    }
-
-    // Update the referral contract address by the owner
-    function setReferralAddress(IReferral _referral) external onlyOwner {
-        require(updateReferralAddress == false, "The Referral contract address is changed already");
-        referral = _referral;
-        updateReferralAddress = true;
-        emit SetReferralAddress(msg.sender, _referral);
-    }
-
-    // Update referral commission rate by the owner
-    function setReferralCommissionRate(uint16 _referralCommissionRate) external onlyOwner {
-        require(_referralCommissionRate <= MAXIMUM_REFERRAL_COMMISSION_RATE, "setReferralCommissionRate: invalid referral commission rate basis points");
-        referralCommissionRate = _referralCommissionRate;
-        emit SetReferralCommissionRate(msg.sender, _referralCommissionRate);
-    }
-
-    // Pay referral commission to the referrer who referred this user.
-    function payReferralCommission(address _user, uint256 _pending) internal {
-        if (address(referral) != address(0) && referralCommissionRate > 0) {
-            address referrer = referral.getReferrer(_user);
-            uint256 commissionAmount = _pending.mul(referralCommissionRate).div(10000);
-
-            if (referrer != address(0) && commissionAmount > 0) {
-                if (apollo.totalSupply().add(commissionAmount) <= max_apollo_supply) {
-                    apollo.mint(referrer, commissionAmount);
-                } else if (apollo.totalSupply() < max_apollo_supply) {
-                    apollo.mint(address(this), max_apollo_supply.sub(apollo.totalSupply()));
-                }
-                emit ReferralCommissionPaid(_user, referrer, commissionAmount);
-            }
-        }
-    }
-
-    // Only update before start of farm
-    function updateStartBlock(uint256 _startBlock) onlyOwner external {
-        require(startBlock > block.number, "Farm already started");
-        uint256 length = poolInfo.length;
-        for (uint256 pid = 0; pid < length; ++pid) {
-            PoolInfo storage pool = poolInfo[pid];
-            pool.lastRewardBlock = _startBlock;
-        }
-        startBlock = _startBlock;
-        emit UpdateStartBlock(msg.sender, _startBlock);
-    }
 }

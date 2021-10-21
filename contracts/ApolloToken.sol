@@ -10,14 +10,14 @@ import "./interfaces/IBank.sol";
 contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
 
     // Transfer tax rate in basis points. (default 5%)
-    uint16 public transferTaxRate = 500;
+    uint16 public transferTaxRate = 300;
     // Burn rate % of transfer tax. (default 20% x 5% = 1% of total amount).
     uint16 public burnRate = 20;
     // Max transfer tax rate: 10%.
     uint16 public constant MAXIMUM_TRANSFER_TAX_RATE = 1000;
     // Burn address
     address public constant BURN_ADDRESS = 0x000000000000000000000000000000000000dEaD;
-    address public constant USDC = 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;//matic USDC
+    address public IRON = address(0xD86b5923F3AD7b585eD81B448170ae026c65ae9a); //matic IRON//IRON
     // Automatic swap and liquify enabled
     bool public swapAndLiquifyEnabled = false;
     // Min amount to liquify. (default 500 APOLLOs)
@@ -33,6 +33,9 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
     // The operator can only update the transfer tax rate
     address private _operator;
 
+    mapping(address => bool) whitelist;
+    mapping(address => bool) minters;
+
     // Events
     event OperatorTransferred(address indexed previousOperator, address indexed newOperator);
     event TransferTaxRateUpdated(address indexed operator, uint256 previousRate, uint256 newRate);
@@ -41,9 +44,16 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
     event MinAmountToLiquifyUpdated(address indexed operator, uint256 previousAmount, uint256 newAmount);
     event SingSwapRouterUpdated(address indexed operator, address indexed router, address indexed pair);
     event SwapAndLiquify(uint256 tokensSwapped, uint256 ethReceived, uint256 tokensIntoLiqudity);
+    event whitelistedTransfer(address indexed from, address indexed to, uint256 total);
+    event SetWhiteList(address _addr, bool _status);
+    event SetMinter(address _addr, bool _status);
 
     modifier onlyOperator() {
         require(_operator == msg.sender, "operator: caller is not the operator");
+        _;
+    }
+    modifier onlyMinters() {
+        require(minters[msg.sender], "minter: caller is not a minter");
         _;
     }
 
@@ -65,11 +75,13 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
      */
     constructor() public {
         _operator = _msgSender();
+        whitelist[_msgSender()] = true;
+        minters[_msgSender()] = true;
         emit OperatorTransferred(address(0), _operator);
     }
 
     /// @notice Creates `_amount` token to `_to`. Must only be called by the owner (MasterChef).
-    function mint(address _to, uint256 _amount) public onlyOwner {
+    function mint(address _to, uint256 _amount) public onlyMinters {
         _mint(_to, _amount);
         _moveDelegates(address(0), _delegates[_to], _amount);
     }
@@ -88,7 +100,7 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
             swapAndLiquify();
         }
 
-        if (recipient == masterChef || sender == masterChef || sender == _operator || recipient == BURN_ADDRESS || recipient == address(bank) || transferTaxRate == 0) {
+        if ( whitelist[recipient] || whitelist[sender] || recipient == masterChef || sender == masterChef || sender == _operator || recipient == BURN_ADDRESS || recipient == address(bank) || transferTaxRate == 0) {
             super._transfer(sender, recipient, amount);
         } else {
             uint256 taxAmount = amount.mul(transferTaxRate).div(10000);
@@ -107,29 +119,19 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
 
     /// @dev Swap and add to bank
     function swapAndLiquify() private lockTheSwap transferTaxFree {
-        IERC20 usdc = IERC20(USDC);
+        IERC20 iron = IERC20(IRON);
         uint256 contractTokenBalance = balanceOf(address(this));
         if (contractTokenBalance >= minAmountToLiquify) {
-            // capture the contract's current ETH balance.
-            // this is so that we can capture exactly the amount of ETH that the
-            // swap creates, and not make the liquidity event include any ETH that
-            // has been manually sent to the contract
-            uint256 initialBalance = usdc.balanceOf(address(bank));
-
-            // swap tokens for ETH
-            swapTokensForUSDC(contractTokenBalance);
-
-            // how much ETH did we just swap into?
-            uint256 newBalance = usdc.balanceOf(address(bank)).sub(initialBalance);
-            //add to bank
-            bank.addRepo(newBalance);
+            swapTokensForIRON(contractTokenBalance);
+            uint256 initialBalance = iron.balanceOf(address(bank));
+            bank.addRepo(initialBalance);
         }
     }
 
-    function swapTokensForUSDC(uint256 tokenAmount) private {
+    function swapTokensForIRON(uint256 tokenAmount) private {
         address[] memory path = new address[](2);
         path[0] = address(this);
-        path[1] = USDC;
+        path[1] = IRON;
 
         _approve(address(this), address(apolloSwapRouter), tokenAmount);
 
@@ -194,10 +196,10 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
      * @dev Update the swap router.
      * Can only be called by the current operator.
      */
-    function updateSingSwapRouter(address _router) public onlyOperator {
+    function updateSwapRouter(address _router) public onlyOperator {
         apolloSwapRouter = IUniswapV2Router02(_router);
-        apolloSwapPair = IUniswapV2Factory(apolloSwapRouter.factory()).getPair(address(this), USDC);
-        require(apolloSwapPair != address(0), "APOLLO::updateSingSwapRouter: Invalid pair address.");
+        apolloSwapPair = IUniswapV2Factory(apolloSwapRouter.factory()).getPair(address(this), IRON);
+        require(apolloSwapPair != address(0), "Invalid pair address.");
         emit SingSwapRouterUpdated(msg.sender, address(apolloSwapRouter), apolloSwapPair);
     }
 
@@ -449,4 +451,27 @@ contract ApolloToken is ERC20("Apollo", "Apollo"), Ownable {
         assembly {chainId := chainid()}
         return chainId;
     }
+
+    // allow the token to be used in vaults/other reward contracts
+    function setWhiteList(address _addr, bool _status) external onlyOperator {
+        require(_addr != address(0), "Zero Address");
+        whitelist[_addr] = _status;
+        emit SetWhiteList(_addr, _status);
+    }
+
+    // allow us to add a new mc contract during deployment
+    function setMinter(address _addr, bool _status) external onlyOperator {
+        require(_addr != address(0), "Zero Address");
+        minters[_addr] = _status;
+        emit SetMinter(_addr, _status);
+    }
+
+    // allow us to swap reward token
+    function setSwapToken(address _addr) external onlyOperator {
+        require(_addr != address(0), "Zero Address");
+        IRON = _addr;
+        IERC20(IRON).balanceOf(address(this));
+    }
+
+
 }

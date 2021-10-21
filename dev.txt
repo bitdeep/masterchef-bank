@@ -1,0 +1,38 @@
+nft 0x6011b77d2dcba999f837d6609124fbcdc4ac3a4e
+
+deployer 0x7cef2432A2690168Fb8eb7118A74d5f8EfF9Ef55
+dev addr 0x7cef2432A2690168Fb8eb7118A74d5f8EfF9Ef55
+fee addr 0x80956dCf2a4302176B0cE0c0b4fCE71081b1d6A7
+
+npx truffle-flattener ApolloToken.sol > ..\flattened\ApolloToken.txt
+npx truffle-flattener bank.sol > ..\flattened\bank.txt
+
+
+Apollo Token: 0x87cf37B07a5f879c1af35532862e6229E90C72AF
+Masterchef: 0x66c12e9dC2b3D9Fd5DFe5f54b3Dc5C3D6f2461f4
+Banker: 0xc5dEeb50DD76c969F531fb7540f4AC4c917Fd3fE
+
+- apollo farm limit: 300.000
+- apollo per block: 4.1
+- start block: 20377000 (~3 days)
+- devaddr: 0x7cef2432A2690168Fb8eb7118A74d5f8EfF9Ef55
+- feeaddr: 0x80956dcf2a4302176b0ce0c0b4fce71081b1d6a7
+- owner: 0x7cef2432A2690168Fb8eb7118A74d5f8EfF9Ef55
+
+To update emission,
+- https://polygonscan.com/address/0x12c147e5f46E167008A93A18153b054c70515Aa7#writeContract
+- call function 12 (updateEmissionRate) for:
+-- 4.1 per block for 15 minutes: 4100000000000000000
+-- 4 per block for 2 hours: 4000000000000000000
+-- 0.4 for first week: 400000000000000000
+-- 0.5 for second week: 500000000000000000
+-- 0.6 for third week: 600000000000000000
+
+
+dev swap:
+dev FACTORY_ADDRESS 0xe87ea3831bee4F54349d9B4a0b0e60a6382FE32d
+INIT_CODE_HASH local: 0xb33d142654aecc600197526f34ecacdb075028a648503b17e3740f14d1ab6719
+INIT_CODE_HASH: 0xb33d142654aecc600197526f34ecacdb075028a648503b17e3740f14d1ab6719
+WSDN 0xe5dFCd29dFAC218C777389E26F1060E0D0Fe856B
+ROUTER 0xaFd37A86044528010d0E70cDc58d0A9B5Eb03206
+MULTICALL 0x35fb4895b68aC7A2D11da59d4E9f520c9C86A546
